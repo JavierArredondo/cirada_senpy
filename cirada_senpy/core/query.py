@@ -64,7 +64,3 @@ class Query:
         response = self.create_response(response.text)
         return response
 
-
-if __name__ == "__main__":
-    query = Query(20, 20, "Abel 1314")
-    query.submit()

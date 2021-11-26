@@ -34,11 +34,3 @@ class Collector:
             output_name = list(payload.keys())[0]
             with open(f"{output_name}.tgz", "wb") as f:
                 f.write(response.content)
-
-
-if __name__ == "__main__":
-    from query import Query
-    query = Query(20, 20, "Abel 1314")
-    data = query.submit()
-    collector = Collector(data)
-    collector.download()
