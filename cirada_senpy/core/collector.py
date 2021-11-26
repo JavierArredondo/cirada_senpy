@@ -1,13 +1,17 @@
+import os.path
+
 import pandas as pd
 import requests
 from typing import List
+from tqdm import tqdm
 
 
 class Collector:
-    def __init__(self, data: pd.DataFrame):
+    def __init__(self, data: pd.DataFrame, output_path="."):
         self.data = data
         self.headers = {"Content-Type": "application/json"}
         self.url = "http://cutouts.cirada.ca/download_fits_batch/"
+        self.output_path = output_path
         pass
 
     def create_payloads(self) -> List[dict]:
@@ -29,8 +33,9 @@ class Collector:
 
     def download(self):
         payloads = self.create_payloads()
-        for payload in payloads:
+        for payload in tqdm(payloads):
             response = requests.request("POST", self.url, json=payload, headers=self.headers)
             output_name = list(payload.keys())[0]
-            with open(f"{output_name}.tgz", "wb") as f:
+            output_path = os.path.join(self.output_path, f"{output_name}.tgz")
+            with open(output_path, "wb") as f:
                 f.write(response.content)
