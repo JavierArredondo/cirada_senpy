@@ -1,43 +1,68 @@
+import os.path
+
 import pandas as pd
-from query import Query
-from collector import Collector
+from .query import Query
+from .collector import Collector
+from ..io.data_file import read_file
 from tqdm import tqdm
 
 
 class Handler:
-    def __init__(self, input_data: pd.DataFrame):
+    def __init__(self, input_path_file: str, output_dir: str = "/tmp"):
+        """
+        :param input_path_file: The path to the file (csv, parquet or pickle extension)
+        :param output_dir: The path to the directory where the downloaded files will be write
+        """
+        self.input_path_file = input_path_file
+        self.output_dir = output_dir
+        self.data = None
+
+    def _verify_io(self) -> bool:
         """
 
-        :param input_data: *** This must be the path to
+        :return:
         """
-        self.input_data = input_data
-        self.input_data = self.input_data.where(pd.notnull(self.input_data), None)
+        if not os.path.exists(self.input_path_file):
+            raise Exception(f"The input file {self.input_path_file} does not exists")
+        if not os.path.isdir(self.output_dir):
+            raise Exception(f"The output directory {self.input_path_file} does not exists")
+        return True
 
-    def submit(self):
+    def _open_file(self) -> None:
+        """
+
+        :return:
+        """
+        data = read_file(self.input_path_file)
+        data = data.where(pd.notnull(data), None)
+        self.data = data
+
+    def _submit(self):
+        """
+
+        :return:
+        """
         response = []
-        for index, row in tqdm(self.input_data.iterrows()):
+        for index, row in tqdm(self.data.iterrows()):
             query = Query(20, 20, ra=row["ra"], dec=row["dec"], source_name=row["name"])
             res = query.submit()
             response.append(res)
         response = pd.concat(response, ignore_index=True)
         return response
 
-    def download(self, submited_data: pd.DataFrame):
-        collector = Collector(submited_data, output_path="/tmp")
+    def _download(self):
+        """
+
+        :return:
+        """
+        collector = Collector(self.data, output_path=self.output_dir)
         collector.download()
 
+    def download(self):
+        """
 
-if __name__ == "__main__":
-    from io import StringIO
-    example_file = """ra,dec,name
-    162.338077, -0.66805,
-    ,,M87
-    '00 42 30, +41 12 00'
-    05h 35m 18s, -05d 23m 0s,Orion
-    """
-    test_data = StringIO(example_file)
-    input_data = pd.read_csv(test_data)
-    handler = Handler(input_data)
-    files = handler.submit()
-    handler.download(files)
-
+        :return:
+        """
+        if self._verify_io():
+            self._submit()
+            self._download()
