@@ -1,21 +1,13 @@
-import pandas as pd
 import os
+import pandas as pd
 
 CSV = ["csv", "txt"]
 PARQUET = ["parquet"]
 PICKLE = ["pkl", "pickle"]
 
-pandas_read = {
-    "csv": pd.read_csv,
-    "parquet": pd.read_parquet,
-    "pickle": pd.read_pickle
-}
+pandas_read = {"csv": pd.read_csv, "parquet": pd.read_parquet, "pickle": pd.read_pickle}
 
-pandas_write = {
-    "csv": "to_csv",
-    "parquet": "to_parquet",
-    "pickle": "to_pickle"
-}
+pandas_write = {"csv": "to_csv", "parquet": "to_parquet", "pickle": "to_pickle"}
 
 
 def get_format(extension: str) -> str:
@@ -76,5 +68,5 @@ def write_file(df: pd.DataFrame, path: str, file_format: str = None, **kwargs) -
     if file_format is None:
         file_format = get_format(extension)
 
-    writer = getattr(df,pandas_write[file_format])
+    writer = getattr(df, pandas_write[file_format])
     writer(path, **kwargs)
