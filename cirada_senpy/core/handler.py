@@ -29,7 +29,7 @@ class Handler:
             raise Exception(f"The input file {self.input_path_file} does not exists")
         if not os.path.exists(self.output_dir):
             os.makedirs(self.output_dir)
-            print("The output doesn't exists but I create the folder for you :)")
+            print("The output doesn't exists but I created the folder for you :)")
         return True
 
     def _open_file(self) -> pd.DataFrame:
