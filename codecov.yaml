@@ -1,0 +1,20 @@
+codecov:
+  require_ci_to_pass: yes
+
+coverage:
+  precision: 2
+  round: down
+  range: "90...100"
+
+  notify:
+    after_n_builds: 3
+
+  status:
+    project:
+      default:
+        target: 90%
+        threshold: 1%
+    patch: no
+    changes: no
+
+comment: off
