@@ -37,8 +37,8 @@ def read_file(path: str, file_format: str = None, **kwargs) -> pd.DataFrame:
     :param kwargs: arguments to specific io operations
     :return: Data in a pandas DataFrame
     """
-    if os.path.isdir(path):
-        raise Exception("Path has to be a directory")
+    if not os.path.exists(path):
+        raise FileNotFoundError("Path not exists")
 
     filename = os.path.basename(path)
     extension = filename.split(".")[-1]
