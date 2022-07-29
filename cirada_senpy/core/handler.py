@@ -13,7 +13,7 @@ class Handler:
     ):
         """
         :param input_path_file: The path to the file (csv, parquet or pickle extension)
-        :param output_dir: The path to the directory where the downloaded files will be write
+        :param output_dir: The path to the directory where the downloaded files will be written
         """
         self.input_path_file = input_path_file
         self.output_dir = output_dir

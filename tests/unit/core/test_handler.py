@@ -19,14 +19,21 @@ class HandlerTestCase(TestCase):
 
     def test_verify_io(self):
         # A valid handler: the file and the output dir exists
-        hndlr = Handler(
+        handler = Handler(
             input_path_file=self.input_path_file, output_dir=self.output_dir
         )
-        valid = hndlr._verify_io()
+        valid = handler._verify_io()
         self.assertTrue(valid)
 
         # An invalid handler: the file doest not exists
         with self.assertRaises(Exception) as context:
-            hndlr = Handler(input_path_file="thi_files.csv", output_dir=self.output_dir)
-            valid = hndlr._verify_io()
+            handler = Handler(
+                input_path_file="thi_files.csv", output_dir=self.output_dir
+            )
+            valid = handler._verify_io()
         self.assertIsInstance(context.exception, Exception)
+
+    def test_download(self):
+        handler = Handler(
+            input_path_file=self.input_path_file, output_dir=self.output_dir
+        )

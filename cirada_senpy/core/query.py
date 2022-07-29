@@ -44,6 +44,7 @@ class Query:
         return payload
 
     def create_response(self, response: str) -> pd.DataFrame:
+        # }]}}}
         response = json.loads(
             response[57:-5]
         )  # the string response has weird content like ?END?
