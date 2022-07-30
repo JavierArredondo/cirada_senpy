@@ -39,6 +39,7 @@ class Collector:
             response = requests.request(
                 "POST", self.url, json=payload, headers=self.headers
             )
-            output_path = os.path.join(self.output_path, f"{output_name}.tgz")
-            with open(output_path, "wb") as f:
-                f.write(response.content)
+            if response.status_code == 200:
+                output_path = os.path.join(self.output_path, f"{output_name}.tgz")
+                with open(output_path, "wb") as f:
+                    f.write(response.content)

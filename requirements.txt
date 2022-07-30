@@ -1,4 +1,5 @@
 astropy >= 4.2
+click >= 8.1.3
 pandas >= 1.3.4
 requests >= 2.26
 tqdm >= 4.62
