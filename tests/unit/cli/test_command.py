@@ -2,22 +2,27 @@ from cirada_senpy.cli import commands
 from click.testing import CliRunner
 from unittest import mock
 
-import pandas as pd
+import numpy as np
+import os
 import unittest
+from astropy.io import fits
 
-fake_submitted = pd.DataFrame(
-    {"source_name": ["a"], "filename": "a", "ra": [0], "dec": [0]}
-)
+
+def fake_hdul():
+    return fits.HDUList([fits.PrimaryHDU(data=np.zeros((4, 4), dtype=np.float32))])
 
 
 class TestManage(unittest.TestCase):
     def setUp(self):
         self.runner = CliRunner()
 
-    @mock.patch("cirada_senpy.core.query.Query.submit", return_value=fake_submitted)
-    def test_download(self, mock_query: mock.Mock):
-        with self.runner.isolated_filesystem(temp_dir="/tmp") as td:
+    @mock.patch("cirada_senpy.core.handler.fetch_survey", return_value=[fake_hdul()])
+    def test_download(self, _mock):
+        with self.runner.isolated_filesystem() as td:
             with open("input.csv", "w") as f:
-                f.write("ra,dec,name\n05h 35m 18s, -05d 23m 0s,Orion")
-        result = self.runner.invoke(commands.download, [f"{td}/input.csv", td])
-        self.assertEqual(result.exit_code, 0)
+                f.write("ra,dec,name\n187.7059,12.3911,M87\n")
+            result = self.runner.invoke(
+                commands.download, ["input.csv", td, "-s", "NVSS"]
+            )
+            self.assertEqual(result.exit_code, 0, result.output)
+            self.assertTrue(any(n.endswith("_NVSS.fits") for n in os.listdir(td)))
