@@ -1,5 +1,6 @@
 from cirada_senpy.science import (
     SURVEY_FREQUENCY_MHZ,
+    fit_spectral_index,
     measure_cutout,
     peak_flux,
     spectral_index,
@@ -79,6 +80,30 @@ class FrequencyTableTestCase(TestCase):
         self.assertEqual(SURVEY_FREQUENCY_MHZ["TGSS"], 150.0)
         self.assertEqual(SURVEY_FREQUENCY_MHZ["NVSS"], 1400.0)
         self.assertEqual(SURVEY_FREQUENCY_MHZ["VLASS"], 3000.0)
+
+
+class FitSpectralIndexTestCase(TestCase):
+    def test_two_points_exact(self):
+        nu = [150.0, 1400.0]
+        flux = [150.0**-0.7, 1400.0**-0.7]
+        alpha, err = fit_spectral_index(nu, flux)
+        self.assertAlmostEqual(alpha, -0.7, places=6)
+        self.assertTrue(np.isnan(err))
+
+    def test_multi_band_fit_recovers_slope(self):
+        nu = np.array([150.0, 843.0, 1400.0, 3000.0])
+        flux = nu**-0.8
+        alpha, err = fit_spectral_index(nu, flux)
+        self.assertAlmostEqual(alpha, -0.8, places=4)
+        self.assertLess(err, 0.01)
+
+    def test_insufficient_points(self):
+        alpha, err = fit_spectral_index([1400.0], [10.0])
+        self.assertTrue(np.isnan(alpha) and np.isnan(err))
+
+    def test_ignores_nonpositive(self):
+        alpha, _ = fit_spectral_index([150.0, 1400.0, 3000.0], [100.0, 10.0, np.nan])
+        self.assertLess(alpha, 0)
 
 
 class MeasureCutoutTestCase(TestCase):

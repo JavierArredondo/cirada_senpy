@@ -1,4 +1,8 @@
-from cirada_senpy.core import download_file, measure_catalog
+from cirada_senpy.core import (
+    download_file,
+    measure_catalog,
+    spectral_index_from_catalog,
+)
 from cirada_senpy.core.surveys import AVAILABLE_SURVEYS, DEFAULT_SURVEYS
 
 import click
@@ -67,6 +71,22 @@ def measure(input_path: str, output_path: str, surveys: str, radius: float):
         surveys=survey_list,
         radius_arcmin=radius,
     )
+
+
+@cli.command("spectral-index")
+@click.argument("catalog_path", type=str)
+@click.argument("output_path", type=str)
+@click.option(
+    "--flux",
+    "-f",
+    "flux_column",
+    default="integrated",
+    type=click.Choice(["integrated", "peak"]),
+    help="Flux measure to fit (falls back to peak where missing).",
+)
+def spectral_index_cmd(catalog_path: str, output_path: str, flux_column: str):
+    """Fit a per-source radio spectral index from a `senpy measure` catalog."""
+    spectral_index_from_catalog(catalog_path, output_path, flux_column=flux_column)
 
 
 if __name__ == "__main__":

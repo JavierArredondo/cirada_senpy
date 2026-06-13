@@ -155,6 +155,21 @@ For example M87 comes out at **≈138 Jy integrated in NVSS** — matching its
 catalogued 1.4 GHz flux — and lower in FIRST, whose finer beam resolves out the
 extended emission.
 
+### Spectral index — fit α per source
+
+`measure` and `spectral-index` compose: measure once, then fit a power law
+(_S ∝ ν<sup>α</sup>_) across each source's radio bands. Two bands give the exact
+index; three or more give a least-squares SED slope with an uncertainty.
+
+```bash
+senpy measure         targets.csv catalog.csv -s TGSS,NVSS,VLASS
+senpy spectral-index  catalog.csv alpha.csv     # -> source, n_bands, alpha, alpha_err
+```
+
+On bright calibrators this cleanly separates flat-spectrum cores (3C84, 3C273;
+α ≈ −0.3) from steep-spectrum sources (3C196 α ≈ −0.80, matching its catalogued
+value).
+
 ### Python API
 
 ```python
