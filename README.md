@@ -62,6 +62,16 @@ steep-spectrum sources (the 3C calibrators, red):
 > common resolution and integrates flux. The point is that the multi-survey data
 > — and the feature — drop straight out of the tool.
 
+Reproduce every figure above from live data:
+
+```bash
+uv run --extra viz python examples/gallery.py
+```
+
+The spectral-index helpers live in [`cirada_senpy/science.py`](cirada_senpy/science.py)
+as pure functions — `spectral_index`, `spectral_index_map`, `matched_cutouts`,
+`peak_flux` — which a `senpy spectral-index` command will wrap next.
+
 ## Requirements
 
 - Python ≥ 3.10

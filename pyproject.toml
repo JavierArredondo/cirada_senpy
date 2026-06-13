@@ -20,6 +20,9 @@ dependencies = [
     "tqdm>=4.62",
 ]
 
+[project.optional-dependencies]
+viz = ["matplotlib>=3.7"]
+
 [project.scripts]
 senpy = "cirada_senpy.cli.commands:cli"
 
