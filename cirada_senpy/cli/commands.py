@@ -1,4 +1,4 @@
-from cirada_senpy.core import download_file
+from cirada_senpy.core import download_file, measure_catalog
 from cirada_senpy.core.surveys import AVAILABLE_SURVEYS, DEFAULT_SURVEYS
 
 import click
@@ -39,6 +39,33 @@ def download(input_path: str, output_path: str, surveys: str, radius: float, ove
         surveys=survey_list,
         radius_arcmin=radius,
         overwrite=overwrite,
+    )
+
+
+@cli.command()
+@click.argument("input_path", type=str)
+@click.argument("output_path", type=str)
+@click.option(
+    "--surveys",
+    "-s",
+    default=",".join(DEFAULT_SURVEYS),
+    help=f"Comma-separated surveys. Available: {', '.join(AVAILABLE_SURVEYS)}",
+)
+@click.option(
+    "--radius",
+    "-r",
+    default=3.0,
+    type=float,
+    help="Cutout radius in arcminutes.",
+)
+def measure(input_path: str, output_path: str, surveys: str, radius: float):
+    """Measure cutouts (peak, integrated flux, rms, snr) into a feature catalog."""
+    survey_list = [s for s in surveys.split(",") if s.strip()]
+    measure_catalog(
+        input_path,
+        output_path,
+        surveys=survey_list,
+        radius_arcmin=radius,
     )
 
 

@@ -20,6 +20,18 @@ SURVEY_FREQUENCY_MHZ = {
     "VLASS": 3000.0,
 }
 
+# Published restoring-beam FWHM (arcsec) per radio survey, used for integrated
+# flux when SkyView strips BMAJ/BMIN from the header. Optical/IR surveys have
+# no beam and are intentionally absent.
+SURVEY_BEAM_ARCSEC = {
+    "TGSS": 25.0,
+    "GLEAM": 120.0,
+    "SUMSS": 45.0,
+    "NVSS": 45.0,
+    "FIRST": 5.4,
+    "VLASS": 2.5,
+}
+
 
 def peak_flux(hdul) -> float:
     """Peak pixel value (Jy/beam) of a cutout HDUList, ignoring NaNs."""
@@ -85,3 +97,60 @@ def matched_cutouts(position, surveys, pixels=300, radius=None):
         position=position, survey=names, pixels=pixels, radius=radius
     )
     return [np.squeeze(image[0].data).astype(float) for image in images]
+
+
+def _beam_area_pixels(header, beam_fwhm_deg=None):
+    """Gaussian beam area in pixels from BMAJ/BMIN (or a fallback FWHM), or None.
+
+    Prefers the header's BMAJ/BMIN; if those are absent (e.g. SkyView strips
+    them), falls back to a circular beam of ``beam_fwhm_deg``. Returns None when
+    no beam is known or the pixel scale is missing.
+    """
+    bmaj, bmin = header.get("BMAJ"), header.get("BMIN")  # FWHM in degrees
+    if (not bmaj or not bmin) and beam_fwhm_deg:
+        bmaj = bmin = beam_fwhm_deg
+    scale = header.get("CDELT2") or header.get("CD2_2")  # degrees/pixel
+    if not bmaj or not bmin or not scale:
+        return None
+    beam_area_deg2 = (np.pi * bmaj * bmin) / (4.0 * np.log(2.0))
+    return beam_area_deg2 / (abs(scale) ** 2)
+
+
+def measure_cutout(hdul, threshold_sigma=3.0, beam_fwhm_arcsec=None):
+    """Photometric measurements from a single cutout HDUList.
+
+    Returns a dict with:
+      ``peak``       peak pixel value (map units, e.g. Jy/beam),
+      ``rms``        robust background noise (sigma-clipped std),
+      ``snr``        (peak - background) / rms,
+      ``integrated`` beam-corrected integrated flux above ``threshold_sigma``,
+                     for radio maps with a beam (BMAJ/BMIN); NaN otherwise,
+      ``npix``       number of pixels above the detection threshold,
+      ``bunit``      the map's BUNIT, so ``peak`` is interpretable.
+
+    Integrated flux is only well-defined for beamed (radio) maps; for optical/IR
+    surveys with no beam it is left NaN by design.
+    """
+    from astropy.stats import sigma_clipped_stats
+
+    hdu = hdul[0]
+    data = np.squeeze(hdu.data).astype(float)
+    finite = data[np.isfinite(data)]
+    _, median, std = sigma_clipped_stats(finite, sigma=3.0, maxiters=5)
+    peak = float(np.nanmax(data))
+    rms = float(std)
+    detection = data > (median + threshold_sigma * std)
+
+    result = {
+        "peak": peak,
+        "rms": rms,
+        "snr": float((peak - median) / rms) if rms > 0 else float("nan"),
+        "integrated": float("nan"),
+        "npix": int(np.sum(detection)),
+        "bunit": str(hdu.header.get("BUNIT", "")).strip(),
+    }
+    beam_fwhm_deg = (beam_fwhm_arcsec / 3600.0) if beam_fwhm_arcsec else None
+    beam_px = _beam_area_pixels(hdu.header, beam_fwhm_deg)
+    if beam_px:
+        result["integrated"] = float(np.sum(data[detection] - median) / beam_px)
+    return result
