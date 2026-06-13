@@ -8,6 +8,11 @@ The **CIRADA** cutout **SE**rvice i**N** **PY**thon is a small package and CLI t
 **batch-download astronomical image cutouts** from multiple surveys, given a
 table of coordinates or source names.
 
+![M87 across NVSS, FIRST and VLASS](docs/images/m87_montage.png)
+
+<p align="center"><em>M87 fetched across three radio surveys with a single
+<code>senpy download</code> — data: NRAO/VLA (NVSS, FIRST) &amp; CADC (VLASS), rendered with astropy.</em></p>
+
 It takes a target table (CSV / Parquet / Pickle), fetches a cutout per target per
 survey, and writes the results as FITS files — with a progress bar and resumable,
 skip-existing behaviour. Cutouts are pulled **directly from each survey's data
