@@ -67,7 +67,7 @@ def measure_catalog(
     catalog = pd.DataFrame(
         rows,
         columns=["source", "ra", "dec", "survey", "tile",
-                 "peak", "rms", "snr", "integrated", "npix", "bunit"],
+                 "peak", "rms", "snr", "integrated", "npix", "bunit", "date"],
     )
     if output_path:
         write_file(catalog, output_path)

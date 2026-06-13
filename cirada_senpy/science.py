@@ -47,6 +47,29 @@ def spectral_index(flux_low, freq_low_mhz, flux_high, freq_high_mhz):
     return np.log10(flux_high / flux_low) / np.log10(freq_high_mhz / freq_low_mhz)
 
 
+def fit_spectral_index(freqs_mhz, fluxes):
+    """Power-law spectral index ``α`` (``S ∝ ν**α``) across two or more bands.
+
+    Fits ``log10(S) = α·log10(ν) + c`` by least squares over the positive,
+    finite points. Returns ``(alpha, alpha_err)``: for exactly two points the
+    index is exact and the error is NaN; with fewer than two usable points both
+    are NaN.
+    """
+    freqs = np.asarray(freqs_mhz, dtype=float)
+    fluxes = np.asarray(fluxes, dtype=float)
+    good = (freqs > 0) & (fluxes > 0) & np.isfinite(freqs) & np.isfinite(fluxes)
+    x, y = np.log10(freqs[good]), np.log10(fluxes[good])
+    if x.size < 2:
+        return float("nan"), float("nan")
+    if x.size == 2:
+        return float((y[1] - y[0]) / (x[1] - x[0])), float("nan")
+    design = np.vstack([x, np.ones_like(x)]).T
+    coeffs, *_ = np.linalg.lstsq(design, y, rcond=None)
+    residual_var = np.sum((y - design @ coeffs) ** 2) / (x.size - 2)
+    covariance = residual_var * np.linalg.inv(design.T @ design)
+    return float(coeffs[0]), float(np.sqrt(covariance[0, 0]))
+
+
 def spectral_index_map(low, freq_low_mhz, high, freq_high_mhz, threshold=0.05):
     """Per-pixel ``α`` between two co-gridded maps.
 
@@ -148,6 +171,7 @@ def measure_cutout(hdul, threshold_sigma=3.0, beam_fwhm_arcsec=None):
         "integrated": float("nan"),
         "npix": int(np.sum(detection)),
         "bunit": str(hdu.header.get("BUNIT", "")).strip(),
+        "date": str(hdu.header.get("DATE-OBS", "")).strip(),
     }
     beam_fwhm_deg = (beam_fwhm_arcsec / 3600.0) if beam_fwhm_arcsec else None
     beam_px = _beam_area_pixels(hdu.header, beam_fwhm_deg)

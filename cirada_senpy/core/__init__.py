@@ -2,8 +2,10 @@ from typing import List, Optional
 
 from .catalog import measure_catalog
 from .handler import Handler
+from .sed import spectral_index_from_catalog
 from .surveys import AVAILABLE_SURVEYS, DEFAULT_SURVEYS
 from .utils import open_fits_tgz
+from .variability import variability_from_catalog
 
 
 def download_file(
@@ -27,6 +29,8 @@ __all__ = [
     "Handler",
     "download_file",
     "measure_catalog",
+    "spectral_index_from_catalog",
+    "variability_from_catalog",
     "open_fits_tgz",
     "AVAILABLE_SURVEYS",
     "DEFAULT_SURVEYS",
