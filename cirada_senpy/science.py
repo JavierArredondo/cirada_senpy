@@ -171,6 +171,7 @@ def measure_cutout(hdul, threshold_sigma=3.0, beam_fwhm_arcsec=None):
         "integrated": float("nan"),
         "npix": int(np.sum(detection)),
         "bunit": str(hdu.header.get("BUNIT", "")).strip(),
+        "date": str(hdu.header.get("DATE-OBS", "")).strip(),
     }
     beam_fwhm_deg = (beam_fwhm_arcsec / 3600.0) if beam_fwhm_arcsec else None
     beam_px = _beam_area_pixels(hdu.header, beam_fwhm_deg)

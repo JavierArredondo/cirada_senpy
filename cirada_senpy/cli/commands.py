@@ -2,6 +2,7 @@ from cirada_senpy.core import (
     download_file,
     measure_catalog,
     spectral_index_from_catalog,
+    variability_from_catalog,
 )
 from cirada_senpy.core.surveys import AVAILABLE_SURVEYS, DEFAULT_SURVEYS
 
@@ -87,6 +88,20 @@ def measure(input_path: str, output_path: str, surveys: str, radius: float):
 def spectral_index_cmd(catalog_path: str, output_path: str, flux_column: str):
     """Fit a per-source radio spectral index from a `senpy measure` catalog."""
     spectral_index_from_catalog(catalog_path, output_path, flux_column=flux_column)
+
+
+@cli.command()
+@click.argument("catalog_path", type=str)
+@click.argument("output_path", type=str)
+@click.option(
+    "--survey",
+    "-s",
+    default="VLASS",
+    help="Multi-epoch survey to assess (default: VLASS).",
+)
+def variability(catalog_path: str, output_path: str, survey: str):
+    """Flag variable sources across epochs from a `senpy measure` catalog."""
+    variability_from_catalog(catalog_path, output_path, survey=survey)
 
 
 if __name__ == "__main__":
