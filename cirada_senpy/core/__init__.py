@@ -1,5 +1,6 @@
 from typing import List, Optional
 
+from .catalog import measure_catalog
 from .handler import Handler
 from .surveys import AVAILABLE_SURVEYS, DEFAULT_SURVEYS
 from .utils import open_fits_tgz
@@ -25,6 +26,7 @@ def download_file(
 __all__ = [
     "Handler",
     "download_file",
+    "measure_catalog",
     "open_fits_tgz",
     "AVAILABLE_SURVEYS",
     "DEFAULT_SURVEYS",

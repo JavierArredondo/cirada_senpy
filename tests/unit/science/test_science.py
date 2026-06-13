@@ -1,5 +1,6 @@
 from cirada_senpy.science import (
     SURVEY_FREQUENCY_MHZ,
+    measure_cutout,
     peak_flux,
     spectral_index,
     spectral_index_map,
@@ -8,6 +9,19 @@ from unittest import TestCase
 
 import numpy as np
 from astropy.io import fits
+
+
+def gaussian_cutout(with_beam=True):
+    y, x = np.mgrid[0:50, 0:50]
+    source = 10.0 * np.exp(-((x - 25) ** 2 + (y - 25) ** 2) / (2 * 3.0**2))
+    rng = np.random.default_rng(0)
+    data = (source + rng.normal(0, 0.05, (50, 50))).astype(np.float32)
+    header = fits.Header()
+    header["BUNIT"] = "JY/BEAM" if with_beam else "counts"
+    if with_beam:
+        header["BMAJ"] = header["BMIN"] = 0.01  # deg
+        header["CDELT2"] = 0.001  # deg/pixel
+    return fits.HDUList([fits.PrimaryHDU(data=data, header=header)])
 
 
 class SpectralIndexTestCase(TestCase):
@@ -65,3 +79,26 @@ class FrequencyTableTestCase(TestCase):
         self.assertEqual(SURVEY_FREQUENCY_MHZ["TGSS"], 150.0)
         self.assertEqual(SURVEY_FREQUENCY_MHZ["NVSS"], 1400.0)
         self.assertEqual(SURVEY_FREQUENCY_MHZ["VLASS"], 3000.0)
+
+
+class MeasureCutoutTestCase(TestCase):
+    def test_beamed_map_measures_all(self):
+        m = measure_cutout(gaussian_cutout(with_beam=True))
+        self.assertAlmostEqual(m["peak"], 10.0, delta=0.5)
+        self.assertGreater(m["snr"], 5)
+        self.assertTrue(np.isfinite(m["integrated"]) and m["integrated"] > 0)
+        self.assertGreater(m["npix"], 0)
+        self.assertEqual(m["bunit"], "JY/BEAM")
+
+    def test_no_beam_leaves_integrated_nan(self):
+        m = measure_cutout(gaussian_cutout(with_beam=False))
+        self.assertTrue(np.isnan(m["integrated"]))
+        self.assertGreater(m["snr"], 5)  # peak/rms still well-defined
+
+    def test_fallback_beam_enables_integrated(self):
+        # No BMAJ/BMIN in header (like SkyView), but a survey beam is supplied
+        # and the header still carries a pixel scale.
+        hdul = gaussian_cutout(with_beam=False)
+        hdul[0].header["CDELT2"] = 0.001
+        m = measure_cutout(hdul, beam_fwhm_arcsec=3.6)
+        self.assertTrue(np.isfinite(m["integrated"]) and m["integrated"] > 0)

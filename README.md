@@ -133,6 +133,28 @@ e.g. VLASS — is saved as `<label>_VLASS_1.fits`, `<label>_VLASS_2.fits`, … R
 the same command skips targets already on disk, so interrupted batches resume
 cleanly.
 
+### Measure — cutouts to a feature catalog
+
+Beyond downloading, `senpy measure` fetches each target in each survey and
+**measures** it into one tidy catalog (CSV / Parquet / Pickle):
+
+```bash
+senpy measure targets.csv catalog.csv -s NVSS,FIRST,VLASS -r 3
+```
+
+| column | meaning |
+|--------|---------|
+| `source`, `ra`, `dec` | target label and position |
+| `survey`, `tile` | survey key and tile index (radio surveys can return several) |
+| `peak` | peak pixel value (units in `bunit`, e.g. Jy/beam) |
+| `integrated` | beam-corrected integrated flux (radio only; NaN for optical/IR) |
+| `rms`, `snr` | robust background noise and peak signal-to-noise |
+| `npix` | pixels above the 3σ detection threshold |
+
+For example M87 comes out at **≈138 Jy integrated in NVSS** — matching its
+catalogued 1.4 GHz flux — and lower in FIRST, whose finer beam resolves out the
+extended emission.
+
 ### Python API
 
 ```python
