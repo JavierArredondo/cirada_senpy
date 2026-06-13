@@ -32,6 +32,46 @@ archive** via [astroquery](https://astroquery.readthedocs.io/):
 
 The default survey set is `VLASS,NVSS,FIRST`.
 
+## Gallery — real science from a few fetches
+
+Because senpy pulls the **same patch of sky from many surveys**, a handful of
+cutouts is enough to do actual radio astronomy. Every figure below is generated
+directly from `fetch_survey(...)` output — nothing is hand-drawn.
+
+**One source across the spectrum — Cygnus A (radio → infrared → optical):**
+
+![Cygnus A across surveys](docs/images/cygA_multiwavelength.png)
+
+**Spectral index from two surveys.** Source brightness follows _S ∝ ν<sup>α</sup>_,
+so two frequencies give the spectral index α — which separates source physics
+(flat α≈0 → AGN cores/hotspots; steep α≈−0.7 → aged lobes). Computing α
+**per pixel** between TGSS (150 MHz) and NVSS (1.4 GHz) recovers Cygnus A's
+textbook structure: flat hotspots where the jets terminate, steepening into the
+aged lobes.
+
+![Cygnus A spectral index map](docs/images/cygA_spectral_map.png)
+
+The same idea as a **single feature per source**, over a sample of bright
+calibrators — flat-spectrum cores (3C84, blue) cleanly separate from
+steep-spectrum sources (the 3C calibrators, red):
+
+![TGSS–NVSS spectral index of calibrators](docs/images/spectral_index.png)
+
+> These are **indicative** spectral indices from peak flux on each survey's
+> native beam (TGSS ≈ 25″, NVSS ≈ 45″); a publication-grade α convolves both to a
+> common resolution and integrates flux. The point is that the multi-survey data
+> — and the feature — drop straight out of the tool.
+
+Reproduce every figure above from live data:
+
+```bash
+uv run --extra viz python examples/gallery.py
+```
+
+The spectral-index helpers live in [`cirada_senpy/science.py`](cirada_senpy/science.py)
+as pure functions — `spectral_index`, `spectral_index_map`, `matched_cutouts`,
+`peak_flux` — which a `senpy spectral-index` command will wrap next.
+
 ## Requirements
 
 - Python ≥ 3.10
@@ -92,6 +132,28 @@ name, or its coordinates if unnamed). A survey returning multiple tiles/epochs �
 e.g. VLASS — is saved as `<label>_VLASS_1.fits`, `<label>_VLASS_2.fits`, … Re-running
 the same command skips targets already on disk, so interrupted batches resume
 cleanly.
+
+### Measure — cutouts to a feature catalog
+
+Beyond downloading, `senpy measure` fetches each target in each survey and
+**measures** it into one tidy catalog (CSV / Parquet / Pickle):
+
+```bash
+senpy measure targets.csv catalog.csv -s NVSS,FIRST,VLASS -r 3
+```
+
+| column | meaning |
+|--------|---------|
+| `source`, `ra`, `dec` | target label and position |
+| `survey`, `tile` | survey key and tile index (radio surveys can return several) |
+| `peak` | peak pixel value (units in `bunit`, e.g. Jy/beam) |
+| `integrated` | beam-corrected integrated flux (radio only; NaN for optical/IR) |
+| `rms`, `snr` | robust background noise and peak signal-to-noise |
+| `npix` | pixels above the 3σ detection threshold |
+
+For example M87 comes out at **≈138 Jy integrated in NVSS** — matching its
+catalogued 1.4 GHz flux — and lower in FIRST, whose finer beam resolves out the
+extended emission.
 
 ### Python API
 
