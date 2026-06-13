@@ -1,0 +1,51 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "cirada_senpy"
+dynamic = ["version"]
+description = "CIRADA Cutout SErvice iN PYthon — batch-download radio-astronomy cutouts from the CIRADA portal."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { file = "LICENSE" }
+authors = [{ name = "JavierArredondo", email = "javier.arredondo.c@usach.cl" }]
+keywords = ["astronomy", "radio", "vlass", "cirada", "cutouts", "fits"]
+dependencies = [
+    "astropy>=5.0",
+    "click>=8.1.3",
+    "pandas>=1.3.4",
+    "requests>=2.26",
+    "tqdm>=4.62",
+]
+
+[project.scripts]
+senpy = "cirada_senpy.cli.commands:cli"
+
+[project.urls]
+Homepage = "https://github.com/JavierArredondo/cirada_senpy"
+Repository = "https://github.com/JavierArredondo/cirada_senpy"
+
+[dependency-groups]
+dev = [
+    "pytest>=8.0",
+    "coverage>=7.0",
+    "pre-commit>=3.5",
+    "isort>=5.10",
+    "black>=24.0",
+]
+
+[tool.hatch.version]
+path = "cirada_senpy/__init__.py"
+
+[tool.hatch.build.targets.wheel]
+packages = ["cirada_senpy"]
+
+[tool.isort]
+profile = "black"
+force_alphabetical_sort = true
+force_single_line = false
+skip_gitignore = true
+force_to_top = true
+line_length = 120
+src_paths = ["cirada_senpy", "tests"]
