@@ -5,18 +5,27 @@
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
 
 The **CIRADA** cutout **SE**rvice i**N** **PY**thon is a small package and CLI to
-batch-download radio-astronomy cutouts from the [CIRADA](http://cutouts.cirada.ca/)
-RM cutout server, given a list of coordinates or source names.
+**batch-download astronomical image cutouts** from multiple surveys, given a
+table of coordinates or source names.
 
-It takes a table of targets (CSV / Parquet / Pickle), queries the portal for each
-one, and writes the returned FITS bundles to disk — with a progress bar and a
-skip-existing option for resumable runs.
+It takes a target table (CSV / Parquet / Pickle), fetches a cutout per target per
+survey, and writes the results as FITS files — with a progress bar and resumable,
+skip-existing behaviour. Cutouts are pulled **directly from each survey's data
+archive** via [astroquery](https://astroquery.readthedocs.io/):
 
-> **Portal status (June 2026).** The CIRADA portal is reachable over **plain HTTP
-> only** (`http://cutouts.cirada.ca/`; there is no TLS on port 443). The
-> `rm_get_cutout` endpoint this package targets has been observed returning HTTP
-> 500 — the public service may be partially down or its request format may have
-> drifted since this client was written. See [Status & roadmap](#status--roadmap).
+| Survey | Band | Source |
+|--------|------|--------|
+| `VLASS` | radio 3 GHz | CADC |
+| `NVSS` | radio 1.4 GHz | SkyView |
+| `FIRST` | radio 1.4 GHz | SkyView |
+| `TGSS` | radio 150 MHz | SkyView |
+| `SUMSS` | radio 843 MHz | SkyView |
+| `GLEAM` | radio 170–231 MHz | SkyView |
+| `WISE` | IR 3.4 µm | SkyView |
+| `SDSS` | optical r | SkyView |
+| `DSS` | optical | SkyView |
+
+The default survey set is `VLASS,NVSS,FIRST`.
 
 ## Requirements
 
@@ -25,13 +34,13 @@ skip-existing option for resumable runs.
 
 ## Installation
 
-With [uv](https://docs.astral.sh/uv/) (recommended):
+With [uv](https://docs.astral.sh/uv/):
 
 ```bash
 uv pip install git+https://github.com/JavierArredondo/cirada_senpy.git
 ```
 
-Or, from a clone, into the current environment:
+Or from a clone:
 
 ```bash
 git clone https://github.com/JavierArredondo/cirada_senpy.git
@@ -43,85 +52,83 @@ uv pip install .
 
 ### Input format
 
-The input is a table with `ra`, `dec`, and `name` columns. Coordinates may be
-decimal degrees, sexagesimal strings, or left blank when a resolvable `name` is
-given:
+A table with `ra`, `dec`, and `name` columns. For each row, explicit `ra`/`dec`
+(decimal degrees or sexagesimal) are used if present; otherwise the `name` is
+resolved via Sesame:
 
 | ra          | dec         | name  |
 |-------------|-------------|-------|
+| 187.7059    | 12.3911     | M87   |
 | 162.338077  | -0.66805    |       |
 |             |             | M87   |
-| '00 42 30   | +41 12 00'  |       |
 | 05h 35m 18s | -05d 23m 0s | Orion |
-
-A ready-to-use example lives at [`tests/unit/data/input_example.csv`](tests/unit/data/input_example.csv).
 
 ### CLI
 
 ```bash
-senpy download <path_to_file> <path_to_output>
+senpy download <input_table> <output_dir> [options]
 ```
 
-`<path_to_file>` may be a `.csv`, `.parquet`, or `.pkl`. Pass `--force` to skip
-targets whose output `.tgz` already exists (useful for resuming an interrupted
-batch):
+Options:
+
+| Option | Default | Description |
+|--------|---------|-------------|
+| `-s, --surveys` | `VLASS,NVSS,FIRST` | Comma-separated survey keys (see table above). |
+| `-r, --radius` | `3.0` | Cutout radius in arcminutes. |
+| `--overwrite` | off | Re-fetch cutouts that already exist (default: skip). |
 
 ```bash
-senpy download <path_to_file> <path_to_output> --force
+# VLASS + NVSS cutouts, 5 arcmin radius
+senpy download targets.csv ./cutouts -s VLASS,NVSS -r 5
 ```
+
+Outputs are written as `<label>_<SURVEY>.fits` (where `<label>` is the source
+name, or its coordinates if unnamed). A survey returning multiple tiles/epochs —
+e.g. VLASS — is saved as `<label>_VLASS_1.fits`, `<label>_VLASS_2.fits`, … Re-running
+the same command skips targets already on disk, so interrupted batches resume
+cleanly.
 
 ### Python API
 
 ```python
 from cirada_senpy.core import download_file
 
-download_file("input_example.csv", "/tmp/my_fits")
+written = download_file(
+    "targets.csv",
+    "./cutouts",
+    surveys=["VLASS", "NVSS", "FIRST"],
+    radius_arcmin=3.0,
+)
 ```
 
-Open a downloaded `.tgz` bundle into a list of Astropy HDUs:
+Open a `.tgz` FITS bundle (e.g. legacy CIRADA downloads) into a list of HDUs:
 
 ```python
 from cirada_senpy.core import open_fits_tgz
 
-fits_list = open_fits_tgz("/tmp/my_fits/Orion.tgz")
+fits_list = open_fits_tgz("bundle.tgz")
 ```
 
 ## Development
 
-This project uses [uv](https://docs.astral.sh/uv/) for environment and dependency
-management, and `pre-commit` (isort + black) for formatting.
+This project uses [uv](https://docs.astral.sh/uv/) for environment management and
+`pre-commit` (isort + black) for formatting. The test suite mocks all network
+access and runs fully offline.
 
 ```bash
-# create the venv and install runtime + dev dependencies
-uv sync --dev
-
-# run the test suite
-uv run pytest -q tests/unit/
-
-# run with coverage (matches CI)
-uv run coverage run --source cirada_senpy/ -m pytest tests/unit/
-uv run coverage report
-
-# install the git hooks
-uv run pre-commit install
+uv sync --dev                          # create venv + install deps
+uv run pytest -q tests/unit/           # run tests
+uv run pre-commit install              # install git hooks
 ```
 
-## Status & roadmap
+## Notes
 
-This is a revived 2022 project. Current state:
-
-- ✅ Modernized packaging (`pyproject.toml` + uv), CI on Python 3.10–3.12.
-- ✅ Test suite passes against current `pandas` / `numpy` / `astropy`.
-- ⚠️ The live `rm_get_cutout` endpoint returns HTTP 500 to this client. The unit
-  tests mock the network, so green tests do **not** prove the portal round-trip
-  still works end-to-end. The wire layer (hand-built multipart body + a
-  fixed-offset slice of the JSON response) is fragile by design and is the most
-  likely thing to need fixing.
-
-Possible directions: harden the request/response layer (proper multipart, robust
-JSON parsing, retries and error handling), and/or broaden beyond the RM cutout
-server to the general multi-survey image service (VLASS, FIRST, NVSS, GLEAM,
-WISE, PanSTARRS, SDSS).
+- This package previously targeted the CIRADA RM cutout server
+  (`cutouts.cirada.ca/rmcutout`), which is currently returning HTTP 500. It was
+  re-pointed at the per-survey archives (CADC, SkyView/HEASARC), which are
+  independently maintained and far more durable.
+- Archive endpoints occasionally rate-limit or time out; failed fetches are
+  reported per target at the end of a run and never abort the batch.
 
 ## License
 

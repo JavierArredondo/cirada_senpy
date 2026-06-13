@@ -5,7 +5,7 @@ build-backend = "hatchling.build"
 [project]
 name = "cirada_senpy"
 dynamic = ["version"]
-description = "CIRADA Cutout SErvice iN PYthon — batch-download radio-astronomy cutouts from the CIRADA portal."
+description = "CIRADA Cutout SErvice iN PYthon — batch-download multi-survey astronomical image cutouts (VLASS, NVSS, FIRST, and more) from their data archives."
 readme = "README.md"
 requires-python = ">=3.10"
 license = { file = "LICENSE" }
@@ -13,6 +13,7 @@ authors = [{ name = "JavierArredondo", email = "javier.arredondo.c@usach.cl" }]
 keywords = ["astronomy", "radio", "vlass", "cirada", "cutouts", "fits"]
 dependencies = [
     "astropy>=5.0",
+    "astroquery>=0.4.11",
     "click>=8.1.3",
     "pandas>=1.3.4",
     "requests>=2.26",
