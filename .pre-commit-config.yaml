@@ -18,7 +18,7 @@ repos:
     hooks:
       - id: unit
         name: unit
-        entry: coverage run --source cirada_senpy/ -m pytest -x -s tests/unit/
+        entry: coverage run --source senpy/ -m pytest -x -s tests/unit/
         language: python
         types: [ python ]
         pass_filenames: false

@@ -1,4 +1,4 @@
-from cirada_senpy.core import Handler, download_file
+from senpy.core import Handler, download_file
 from unittest import TestCase, mock
 
 import numpy as np
@@ -35,7 +35,7 @@ class HandlerTestCase(TestCase):
         with self.assertRaises(ValueError):
             Handler(INPUT, self.output_dir, surveys=["BOGUS"])
 
-    @mock.patch("cirada_senpy.core.handler.fetch_survey", return_value=[fake_hdul()])
+    @mock.patch("senpy.core.handler.fetch_survey", return_value=[fake_hdul()])
     def test_download_writes_fits(self, _mock):
         written = Handler(INPUT, self.output_dir, surveys=["NVSS"]).download()
         self.assertEqual(len(written), 2)
@@ -43,7 +43,7 @@ class HandlerTestCase(TestCase):
             self.assertTrue(path.endswith("_NVSS.fits"))
             self.assertTrue(os.path.exists(path))
 
-    @mock.patch("cirada_senpy.core.handler.fetch_survey", return_value=[fake_hdul()])
+    @mock.patch("senpy.core.handler.fetch_survey", return_value=[fake_hdul()])
     def test_skip_existing(self, mock_fetch):
         Handler(INPUT, self.output_dir, surveys=["NVSS"]).download()
         calls_after_first = mock_fetch.call_count
@@ -51,19 +51,19 @@ class HandlerTestCase(TestCase):
         Handler(INPUT, self.output_dir, surveys=["NVSS"]).download()
         self.assertEqual(mock_fetch.call_count, calls_after_first)
 
-    @mock.patch("cirada_senpy.core.handler.fetch_survey", return_value=[fake_hdul()])
+    @mock.patch("senpy.core.handler.fetch_survey", return_value=[fake_hdul()])
     def test_overwrite_refetches(self, mock_fetch):
         Handler(INPUT, self.output_dir, surveys=["NVSS"]).download()
         calls_after_first = mock_fetch.call_count
         Handler(INPUT, self.output_dir, surveys=["NVSS"], overwrite=True).download()
         self.assertEqual(mock_fetch.call_count, 2 * calls_after_first)
 
-    @mock.patch("cirada_senpy.core.handler.fetch_survey", return_value=[])
+    @mock.patch("senpy.core.handler.fetch_survey", return_value=[])
     def test_no_coverage_writes_nothing(self, _mock):
         written = Handler(INPUT, self.output_dir, surveys=["NVSS"]).download()
         self.assertEqual(written, [])
 
-    @mock.patch("cirada_senpy.core.handler.fetch_survey", return_value=[fake_hdul()])
+    @mock.patch("senpy.core.handler.fetch_survey", return_value=[fake_hdul()])
     def test_download_file_helper(self, _mock):
         written = download_file(INPUT, self.output_dir, surveys=["NVSS"])
         self.assertEqual(len(written), 2)

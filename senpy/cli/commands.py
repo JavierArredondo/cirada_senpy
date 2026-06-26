@@ -1,6 +1,6 @@
 import click
 
-from cirada_senpy.core import (
+from senpy.core import (
     download_file,
     flux_history_from_catalog,
     measure_catalog,
@@ -8,7 +8,7 @@ from cirada_senpy.core import (
     spectral_index_from_catalog,
     variability_from_catalog,
 )
-from cirada_senpy.core.surveys import AVAILABLE_SURVEYS, DEFAULT_SURVEYS
+from senpy.core.surveys import AVAILABLE_SURVEYS, DEFAULT_SURVEYS
 
 
 @click.group()

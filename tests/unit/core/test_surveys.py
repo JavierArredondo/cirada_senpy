@@ -1,4 +1,4 @@
-from cirada_senpy.core.surveys import (
+from senpy.core.surveys import (
     AVAILABLE_SURVEYS,
     DEFAULT_SURVEYS,
     normalize_survey,

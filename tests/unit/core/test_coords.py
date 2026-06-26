@@ -1,4 +1,4 @@
-from cirada_senpy.core.coords import _blank, parse_position, source_label
+from senpy.core.coords import _blank, parse_position, source_label
 from unittest import TestCase, mock
 
 from astropy.coordinates import SkyCoord
@@ -30,7 +30,7 @@ class CoordsTestCase(TestCase):
         pos = parse_position(10.0, 20.0, "SomeName")
         self.assertAlmostEqual(pos.ra.deg, 10.0)
 
-    @mock.patch("cirada_senpy.core.coords.SkyCoord.from_name")
+    @mock.patch("senpy.core.coords.SkyCoord.from_name")
     def test_name_resolution(self, mock_from_name):
         mock_from_name.return_value = SkyCoord(187.7, 12.4, unit="deg")
         parse_position(None, None, "M87")

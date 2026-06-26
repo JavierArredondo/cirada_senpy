@@ -2,7 +2,7 @@ from unittest import TestCase
 
 import pandas as pd
 
-from cirada_senpy.core import flux_history_from_catalog
+from senpy.core import flux_history_from_catalog
 
 
 def make_catalog():

@@ -1,4 +1,4 @@
-from cirada_senpy.core import variability_from_catalog
+from senpy.core import variability_from_catalog
 from unittest import TestCase
 
 import pandas as pd

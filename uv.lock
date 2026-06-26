@@ -360,56 +360,6 @@ wheels = [
 ]
 
 [[package]]
-name = "cirada-senpy"
-source = { editable = "." }
-dependencies = [
-    { name = "astropy", version = "6.1.7", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
-    { name = "astropy", version = "7.2.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
-    { name = "astroquery" },
-    { name = "click" },
-    { name = "pandas", version = "2.3.3", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
-    { name = "pandas", version = "3.0.3", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
-    { name = "requests" },
-    { name = "tqdm" },
-]
-
-[package.optional-dependencies]
-viz = [
-    { name = "matplotlib", version = "3.10.9", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
-    { name = "matplotlib", version = "3.11.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
-]
-
-[package.dev-dependencies]
-dev = [
-    { name = "black" },
-    { name = "coverage" },
-    { name = "isort" },
-    { name = "pre-commit" },
-    { name = "pytest" },
-]
-
-[package.metadata]
-requires-dist = [
-    { name = "astropy", specifier = ">=5.0" },
-    { name = "astroquery", specifier = ">=0.4.11" },
-    { name = "click", specifier = ">=8.1.3" },
-    { name = "matplotlib", marker = "extra == 'viz'", specifier = ">=3.7" },
-    { name = "pandas", specifier = ">=1.3.4" },
-    { name = "requests", specifier = ">=2.26" },
-    { name = "tqdm", specifier = ">=4.62" },
-]
-provides-extras = ["viz"]
-
-[package.metadata.requires-dev]
-dev = [
-    { name = "black", specifier = ">=24.0" },
-    { name = "coverage", specifier = ">=7.0" },
-    { name = "isort", specifier = ">=5.10" },
-    { name = "pre-commit", specifier = ">=3.5" },
-    { name = "pytest", specifier = ">=8.0" },
-]
-
-[[package]]
 name = "click"
 version = "8.4.1"
 source = { registry = "https://pypi.org/simple" }
@@ -1955,6 +1905,56 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/1c/03/e834bcd866f2f8a49a85eaff47340affa3bfa391ee9912a952a1faa68c7b/secretstorage-3.5.0.tar.gz", hash = "sha256:f04b8e4689cbce351744d5537bf6b1329c6fc68f91fa666f60a380edddcd11be", size = 19884, upload-time = "2025-11-23T19:02:53.191Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/b7/46/f5af3402b579fd5e11573ce652019a67074317e18c1935cc0b4ba9b35552/secretstorage-3.5.0-py3-none-any.whl", hash = "sha256:0ce65888c0725fcb2c5bc0fdb8e5438eece02c523557ea40ce0703c266248137", size = 15554, upload-time = "2025-11-23T19:02:51.545Z" },
+]
+
+[[package]]
+name = "senpy"
+source = { editable = "." }
+dependencies = [
+    { name = "astropy", version = "6.1.7", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
+    { name = "astropy", version = "7.2.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
+    { name = "astroquery" },
+    { name = "click" },
+    { name = "pandas", version = "2.3.3", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
+    { name = "pandas", version = "3.0.3", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
+    { name = "requests" },
+    { name = "tqdm" },
+]
+
+[package.optional-dependencies]
+viz = [
+    { name = "matplotlib", version = "3.10.9", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
+    { name = "matplotlib", version = "3.11.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
+]
+
+[package.dev-dependencies]
+dev = [
+    { name = "black" },
+    { name = "coverage" },
+    { name = "isort" },
+    { name = "pre-commit" },
+    { name = "pytest" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "astropy", specifier = ">=5.0" },
+    { name = "astroquery", specifier = ">=0.4.11" },
+    { name = "click", specifier = ">=8.1.3" },
+    { name = "matplotlib", marker = "extra == 'viz'", specifier = ">=3.7" },
+    { name = "pandas", specifier = ">=1.3.4" },
+    { name = "requests", specifier = ">=2.26" },
+    { name = "tqdm", specifier = ">=4.62" },
+]
+provides-extras = ["viz"]
+
+[package.metadata.requires-dev]
+dev = [
+    { name = "black", specifier = ">=24.0" },
+    { name = "coverage", specifier = ">=7.0" },
+    { name = "isort", specifier = ">=5.10" },
+    { name = "pre-commit", specifier = ">=3.5" },
+    { name = "pytest", specifier = ">=8.0" },
 ]
 
 [[package]]

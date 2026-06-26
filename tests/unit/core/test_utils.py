@@ -1,4 +1,4 @@
-from cirada_senpy.core import open_fits_tgz
+from senpy.core import open_fits_tgz
 from unittest import TestCase
 
 import os
