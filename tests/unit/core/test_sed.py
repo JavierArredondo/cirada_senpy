@@ -1,4 +1,4 @@
-from cirada_senpy.core import spectral_index_from_catalog
+from senpy.core import spectral_index_from_catalog
 from unittest import TestCase
 
 import numpy as np

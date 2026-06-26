@@ -31,9 +31,9 @@ from astropy.visualization import (
     ZScaleInterval,
 )
 
-from cirada_senpy.core.flux_history import flux_history_from_catalog, plot_flux_history
-from cirada_senpy.core.surveys import fetch_survey
-from cirada_senpy.science import (
+from senpy.core.flux_history import flux_history_from_catalog, plot_flux_history
+from senpy.core.surveys import fetch_survey
+from senpy.science import (
     SURVEY_BEAM_ARCSEC,
     SURVEY_FREQUENCY_MHZ,
     matched_cutouts,

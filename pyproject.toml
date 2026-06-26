@@ -3,9 +3,9 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "cirada_senpy"
+name = "senpy"
 dynamic = ["version"]
-description = "CIRADA Cutout SErvice iN PYthon — batch-download multi-survey astronomical image cutouts (VLASS, NVSS, FIRST, and more) from their data archives."
+description = "Survey ENrichment in PYthon — batch-download multi-survey astronomical cutouts (VLASS, NVSS, FIRST, and more) and measure fluxes, spectral indices, variability, and flux histories."
 readme = "README.md"
 requires-python = ">=3.10"
 license = { file = "LICENSE" }
@@ -24,11 +24,11 @@ dependencies = [
 viz = ["matplotlib>=3.7"]
 
 [project.scripts]
-senpy = "cirada_senpy.cli.commands:cli"
+senpy = "senpy.cli.commands:cli"
 
 [project.urls]
-Homepage = "https://github.com/JavierArredondo/cirada_senpy"
-Repository = "https://github.com/JavierArredondo/cirada_senpy"
+Homepage = "https://github.com/JavierArredondo/senpy"
+Repository = "https://github.com/JavierArredondo/senpy"
 
 [dependency-groups]
 dev = [
@@ -40,10 +40,10 @@ dev = [
 ]
 
 [tool.hatch.version]
-path = "cirada_senpy/__init__.py"
+path = "senpy/__init__.py"
 
 [tool.hatch.build.targets.wheel]
-packages = ["cirada_senpy"]
+packages = ["senpy"]
 
 [tool.isort]
 profile = "black"
@@ -52,4 +52,4 @@ force_single_line = false
 skip_gitignore = true
 force_to_top = true
 line_length = 120
-src_paths = ["cirada_senpy", "tests"]
+src_paths = ["senpy", "tests"]

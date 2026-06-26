@@ -1,4 +1,4 @@
-from cirada_senpy.io.data_file import get_format, read_file, write_file
+from senpy.io.data_file import get_format, read_file, write_file
 from unittest import TestCase
 
 import os

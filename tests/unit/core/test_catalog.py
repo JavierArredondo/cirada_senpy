@@ -1,4 +1,4 @@
-from cirada_senpy.core import measure_catalog
+from senpy.core import measure_catalog
 from unittest import TestCase, mock
 
 import numpy as np
@@ -21,7 +21,7 @@ def beamed_hdul():
 
 
 class MeasureCatalogTestCase(TestCase):
-    @mock.patch("cirada_senpy.core.catalog.fetch_survey", return_value=[beamed_hdul()])
+    @mock.patch("senpy.core.catalog.fetch_survey", return_value=[beamed_hdul()])
     def test_builds_catalog(self, _mock):
         catalog = measure_catalog(INPUT, None, surveys=["NVSS"])
         # 2 sources x 1 survey x 1 tile.
@@ -31,14 +31,14 @@ class MeasureCatalogTestCase(TestCase):
         self.assertTrue((catalog["survey"] == "NVSS").all())
         self.assertTrue((catalog["peak"] == 5.0).all())
 
-    @mock.patch("cirada_senpy.core.catalog.fetch_survey", return_value=[beamed_hdul()])
+    @mock.patch("senpy.core.catalog.fetch_survey", return_value=[beamed_hdul()])
     def test_writes_csv(self, _mock):
         with tempfile.TemporaryDirectory() as tmp:
             out = os.path.join(tmp, "catalog.csv")
             measure_catalog(INPUT, out, surveys=["NVSS"])
             self.assertTrue(os.path.exists(out))
 
-    @mock.patch("cirada_senpy.core.catalog.fetch_survey", return_value=[])
+    @mock.patch("senpy.core.catalog.fetch_survey", return_value=[])
     def test_no_coverage_empty_catalog(self, _mock):
         catalog = measure_catalog(INPUT, None, surveys=["NVSS"])
         self.assertEqual(len(catalog), 0)

@@ -1,4 +1,4 @@
-from cirada_senpy.cli import commands
+from senpy.cli import commands
 from click.testing import CliRunner
 from unittest import mock
 
@@ -16,7 +16,7 @@ class TestManage(unittest.TestCase):
     def setUp(self):
         self.runner = CliRunner()
 
-    @mock.patch("cirada_senpy.core.handler.fetch_survey", return_value=[fake_hdul()])
+    @mock.patch("senpy.core.handler.fetch_survey", return_value=[fake_hdul()])
     def test_download(self, _mock):
         with self.runner.isolated_filesystem() as td:
             with open("input.csv", "w") as f:

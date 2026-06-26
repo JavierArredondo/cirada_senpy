@@ -1,4 +1,4 @@
-from cirada_senpy.science import (
+from senpy.science import (
     SURVEY_FREQUENCY_MHZ,
     fit_spectral_index,
     measure_cutout,

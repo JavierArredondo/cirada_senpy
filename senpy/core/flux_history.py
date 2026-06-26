@@ -6,7 +6,7 @@ generic (``flux_history`` rather than ``light_curve``) since this works for any
 survey/band, not just radio. This is pure post-processing over a ``senpy
 measure`` catalog (which carries each cutout's ``date`` from DATE-OBS).
 
-See :mod:`cirada_senpy.core.variability` for the summary-statistics counterpart.
+See :mod:`senpy.core.variability` for the summary-statistics counterpart.
 """
 
 from typing import Optional, Union
@@ -75,7 +75,7 @@ def flux_history_from_catalog(
 def plot_flux_history(history: pd.DataFrame, output_path: str) -> str:
     """Plot flux vs. epoch (one line per source) to ``output_path`` as an image.
 
-    Requires the optional ``viz`` extra (``pip install cirada_senpy[viz]``).
+    Requires the optional ``viz`` extra (``pip install senpy[viz]``).
     Returns the path written.
     """
     try:
@@ -86,7 +86,7 @@ def plot_flux_history(history: pd.DataFrame, output_path: str) -> str:
         import matplotlib.pyplot as plt
     except ImportError as exc:  # pragma: no cover - depends on optional extra
         raise ImportError(
-            "Plotting requires matplotlib. Install with: pip install 'cirada_senpy[viz]'"
+            "Plotting requires matplotlib. Install with: pip install 'senpy[viz]'"
         ) from exc
 
     fig, ax = plt.subplots(figsize=(8, 5))

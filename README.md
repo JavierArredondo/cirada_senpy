@@ -1,12 +1,13 @@
-# CIRADA SENPY
+# senpy
 
-[![unit](https://github.com/JavierArredondo/cirada_senpy/actions/workflows/unit_tests.yml/badge.svg)](https://github.com/JavierArredondo/cirada_senpy/actions/workflows/unit_tests.yml)
+[![unit](https://github.com/JavierArredondo/senpy/actions/workflows/unit_tests.yml/badge.svg)](https://github.com/JavierArredondo/senpy/actions/workflows/unit_tests.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
 
-The **CIRADA** cutout **SE**rvice i**N** **PY**thon is a small package and CLI to
-**batch-download astronomical image cutouts** from multiple surveys, given a
-table of coordinates or source names.
+**senpy** — **S**urvey **EN**richment in **PY**thon — is a small package and CLI
+that turns multi-survey astronomical cutouts into science. It **batch-downloads
+image cutouts** from many surveys (given a table of coordinates or source names)
+and **measures** them — fluxes, spectral indices, variability, and flux histories.
 
 ![M87 across NVSS, FIRST and VLASS](docs/images/m87_montage.png)
 
@@ -68,7 +69,7 @@ Reproduce every figure above from live data:
 uv run --extra viz python examples/gallery.py
 ```
 
-The spectral-index helpers live in [`cirada_senpy/science.py`](cirada_senpy/science.py)
+The spectral-index helpers live in [`senpy/science.py`](senpy/science.py)
 as pure functions — `spectral_index`, `spectral_index_map`, `matched_cutouts`,
 `peak_flux` — which a `senpy spectral-index` command will wrap next.
 
@@ -82,14 +83,14 @@ as pure functions — `spectral_index`, `spectral_index_map`, `matched_cutouts`,
 With [uv](https://docs.astral.sh/uv/):
 
 ```bash
-uv pip install git+https://github.com/JavierArredondo/cirada_senpy.git
+uv pip install git+https://github.com/JavierArredondo/senpy.git
 ```
 
 Or from a clone:
 
 ```bash
-git clone https://github.com/JavierArredondo/cirada_senpy.git
-cd cirada_senpy
+git clone https://github.com/JavierArredondo/senpy.git
+cd senpy
 uv pip install .
 ```
 
@@ -212,7 +213,7 @@ senpy flux-history  catalog.csv history.csv --plot history.png   # needs the 'vi
 ### Python API
 
 ```python
-from cirada_senpy.core import download_file
+from senpy.core import download_file
 
 written = download_file(
     "targets.csv",
@@ -225,7 +226,7 @@ written = download_file(
 Open a `.tgz` FITS bundle (e.g. legacy CIRADA downloads) into a list of HDUs:
 
 ```python
-from cirada_senpy.core import open_fits_tgz
+from senpy.core import open_fits_tgz
 
 fits_list = open_fits_tgz("bundle.tgz")
 ```
