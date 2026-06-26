@@ -185,6 +185,30 @@ Validated on known sources: the variable AGN **3C84** (Perseus A) rises
 16 → 21 Jy/beam across two VLASS epochs and is flagged `variable`, while the
 standard flux calibrator **3C147** stays flat (<4%) and is not.
 
+### Flux history — flux vs epoch per source
+
+Where `variability` collapses the epochs into one summary row per source,
+`senpy flux-history` keeps every epoch — a long, plottable **flux-vs-time**
+table (the radio equivalent of a light curve, named generically since it works
+for any multi-epoch survey, not just VLASS). Single-epoch sources are kept too.
+
+```bash
+senpy measure       targets.csv catalog.csv -s VLASS
+senpy flux-history  catalog.csv history.csv          # -> source, epoch, flux, snr, n_epochs
+senpy flux-history  catalog.csv history.csv --plot history.png   # needs the 'viz' extra
+```
+
+| Option | Default | Description |
+|--------|---------|-------------|
+| `-s, --survey` | `VLASS` | Multi-epoch survey to build the history for. |
+| `-f, --flux` | `peak` | Flux measure per epoch (`peak` or `integrated`). |
+| `--plot` | off | Also save a flux-vs-epoch figure (one line per source). |
+
+![VLASS flux history](docs/images/flux_history.png)
+
+<p align="center"><em>Real VLASS epochs straight from <code>senpy flux-history</code>:
+3C84 brightening and 3C279 fading between Epoch 1 (2017–19) and Epoch 2 (2020–22).</em></p>
+
 ### Python API
 
 ```python

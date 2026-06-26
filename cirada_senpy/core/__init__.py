@@ -1,6 +1,7 @@
 from typing import List, Optional
 
 from .catalog import measure_catalog
+from .flux_history import flux_history_from_catalog, plot_flux_history
 from .handler import Handler
 from .sed import spectral_index_from_catalog
 from .surveys import AVAILABLE_SURVEYS, DEFAULT_SURVEYS
@@ -31,6 +32,8 @@ __all__ = [
     "measure_catalog",
     "spectral_index_from_catalog",
     "variability_from_catalog",
+    "flux_history_from_catalog",
+    "plot_flux_history",
     "open_fits_tgz",
     "AVAILABLE_SURVEYS",
     "DEFAULT_SURVEYS",
